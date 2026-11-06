@@ -42,3 +42,20 @@
  .node b{font-size:12px}.node small{font-size:11px}
  .stage-row{font-size:13px}
 }
+
+
+/* Interactive teaching redesign: spacious learning surface and response evaluation */
+.content{max-width:1480px}
+.panel-card{box-shadow:0 10px 35px rgba(24,43,83,.05)}
+.panel-card .lead{max-width:75ch}
+.lesson-link:focus-visible,.tab:focus-visible,.primary:focus-visible,.secondary:focus-visible{outline:3px solid #80a7ff;outline-offset:3px}
+.lab-mode{border:1px solid #cbdcf9;background:#f3f7ff;border-radius:12px;padding:16px;margin:20px 0}
+.lab-mode label{display:flex;gap:10px;align-items:center;font-weight:750;font-size:16px;color:#244677}
+.lab-mode input{width:19px;height:19px;accent-color:#365ce8}
+.lab-mode small{display:block;margin-top:8px;font-size:14px;line-height:1.5;color:#50678d}
+.assertion-lab{margin:22px 0;padding:20px;border:1px solid #d9e5f7;border-radius:12px;background:#f8fbff}
+.assertion-lab h3{margin-top:0}
+.assertion-fields{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin:16px 0}
+.assertion-fields label{font-size:15px;font-weight:650;color:#35445f}
+.assertion-fields input{display:block;width:100%;margin-top:7px;padding:11px;border:1px solid #bfcde3;border-radius:8px;font-size:16px}
+@media(max-width:750px){.assertion-fields{grid-template-columns:1fr}.lab-mode label{font-size:15px}}
