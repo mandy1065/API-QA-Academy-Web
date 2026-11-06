@@ -14,15 +14,17 @@ export const EXTRA_SCENARIOS=[
  {id:'auth-negative',title:'Authentication: protected resource',method:'GET',path:'/auth/me',expectedStatus:401,field:'message',value:null,why:'An unauthenticated request should not return protected user data. Compare the observed status to the documented contract.'}
 ];
 export const ALL_SCENARIOS=[...GET_SCENARIOS,...EXTRA_SCENARIOS];
-export function gradeIndependentAssignment({scenario,response,prediction,field,value}){
- if(!response)return {pass:false,message:'Execute the live request first.'};
- if(response.mode!=='LIVE')return {pass:false,message:'Only live API executions count toward independent assessment.'};
- if(!prediction||Number(prediction)!==scenario.expectedStatus)return {pass:false,message:'Revisit the requirement and choose the expected HTTP status.'};
- if(response.status!==scenario.expectedStatus)return {pass:false,message:'Observed status differs from the documented expectation. Record evidence and investigate.'};
- const check=findField(response.data,field);
- if(!field||!check.found)return {pass:false,message:'Inspect the JSON and select a field that actually exists.'};
- if(value!==''&&String(check.value)!==String(value))return {pass:false,message:'Your asserted value does not match the actual response.'};
- return {pass:true,message:'Independent live scenario verified. Save the evidence and explain your reasoning.'};
+export function gradeIndependentAssignment({scenario,response,prediction,field,value,reasonChoice,evaluated}){
+ if(!scenario||scenario.id!=='missing')return {pass:false,message:'Select the assigned missing-product scenario.'};
+ if(!response||response.mode!=='LIVE')return {pass:false,message:'Execute a real live API request first.'};
+ if(!evaluated)return {pass:false,message:'Evaluate and record your manual test before assessment.'};
+ if(!prediction||Number(prediction)!==scenario.expectedStatus||response.status!==scenario.expectedStatus)return {pass:false,message:'Expected and actual HTTP status must both match the requirement.'};
+ if(field!=='message')return {pass:false,message:'Select the response field that explains why the resource was not found.'};
+ const actual=findField(response.data,field);
+ if(!actual.found||typeof actual.value!=='string'||!actual.value.trim())return {pass:false,message:'The live response must contain a nonempty error message.'};
+ if(!value||String(value).trim()!==String(actual.value).trim())return {pass:false,message:'Enter the exact observed message as your JSON assertion.'};
+ if(reasonChoice!=='expected-negative')return {pass:false,message:'A negative test passes when the documented error behavior is observed, not simply because the API returned an error.'};
+ return {pass:true,message:'PASS: live request, expected negative status, exact JSON assertion, recorded evaluation and reasoning all verified.'};
 }
 export function findField(data,path){
  if(!path)return {found:true,value:data};
