@@ -6,6 +6,24 @@ export const GET_SCENARIOS=[
  {id:'invalid',title:'Invalid product ID',method:'GET',path:'/products/not-a-number',expectedStatus:404,field:'message',value:null,why:'An invalid identifier should be rejected or not found. DummyJSON currently uses 404; compare observed behavior to its contract.'},
  {id:'schema',title:'Response structure',method:'GET',path:'/products/1',expectedStatus:200,field:'title',value:null,requiredFields:['id','title','price'],why:'A product response must contain an integer id, a nonempty title, and a numeric price.'}
 ];
+export const EXTRA_SCENARIOS=[
+ {id:'post',title:'POST create product',method:'POST',path:'/products/add',body:{title:'QA Learning Product',price:25},expectedStatus:201,field:'title',value:'QA Learning Product',why:'Creating a product should return HTTP 201 and the submitted title. DummyJSON simulates writes; no persistent database change.'},
+ {id:'put',title:'PUT replace product',method:'PUT',path:'/products/1',body:{title:'QA Replacement',price:35},expectedStatus:200,field:'title',value:'QA Replacement',why:'PUT replaces a product representation. DummyJSON simulates the update.'},
+ {id:'patch',title:'PATCH update title',method:'PATCH',path:'/products/1',body:{title:'QA Updated'},expectedStatus:200,field:'title',value:'QA Updated',why:'PATCH changes selected fields. DummyJSON simulates the update.'},
+ {id:'delete',title:'DELETE product',method:'DELETE',path:'/products/1',expectedStatus:200,field:'isDeleted',value:true,why:'The simulated delete response should contain isDeleted=true.'},
+ {id:'auth-negative',title:'Authentication: protected resource',method:'GET',path:'/auth/me',expectedStatus:401,field:'message',value:null,why:'An unauthenticated request should not return protected user data. Compare the observed status to the documented contract.'}
+];
+export const ALL_SCENARIOS=[...GET_SCENARIOS,...EXTRA_SCENARIOS];
+export function gradeIndependentAssignment({scenario,response,prediction,field,value}){
+ if(!response)return {pass:false,message:'Execute the live request first.'};
+ if(response.mode!=='LIVE')return {pass:false,message:'Only live API executions count toward independent assessment.'};
+ if(!prediction||Number(prediction)!==scenario.expectedStatus)return {pass:false,message:'Revisit the requirement and choose the expected HTTP status.'};
+ if(response.status!==scenario.expectedStatus)return {pass:false,message:'Observed status differs from the documented expectation. Record evidence and investigate.'};
+ const check=findField(response.data,field);
+ if(!field||!check.found)return {pass:false,message:'Inspect the JSON and select a field that actually exists.'};
+ if(value!==''&&String(check.value)!==String(value))return {pass:false,message:'Your asserted value does not match the actual response.'};
+ return {pass:true,message:'Independent live scenario verified. Save the evidence and explain your reasoning.'};
+}
 export function findField(data,path){
  if(!path)return {found:true,value:data};
  let value=data;
