@@ -168,3 +168,25 @@ body:has(.academy-lesson-experience) .course-heading span{display:none}
 body:has(.academy-lesson-experience) .course-heading{font-size:13px}
 body:has(.academy-lesson-experience) .course-heading::after{content:' · START HERE'}
 @media(max-width:800px){.academy-track-grid,.academy-manual-steps{grid-template-columns:1fr}.academy-stage-intro{padding:22px}.academy-primary-nav{justify-content:flex-start}}
+
+
+/* Guided manual-to-automation learning and observable feedback */
+.academy-guided-card{background:#fff;border:1px solid #dbe4f2;border-radius:17px;padding:30px;margin:22px 0;max-width:1050px}
+.academy-guided-card h2{font-size:26px;margin:13px 0}
+.academy-guided-card p,.academy-guided-card li{font-size:15px;line-height:1.8}
+.academy-guided-card label{display:block;font-weight:700;margin:18px 0 8px}
+.academy-guided-card select{display:block;width:100%;max-width:370px;padding:13px;border:1px solid #c9d6e9;border-radius:9px;font-size:15px}
+.academy-scenario-tabs{display:flex;gap:10px;flex-wrap:wrap;margin:17px 0 24px}
+.academy-scenario-tabs button{border:1px solid #cfdaf0;background:#f5f8ff;color:#30466d;border-radius:10px;padding:13px 17px;font-weight:700}
+.academy-scenario-tabs button.active{background:#2f5de3;color:#fff;border-color:#2f5de3}
+.academy-request-summary{display:flex;gap:13px;align-items:center;background:#f3f7ff;padding:16px;border-radius:11px;margin:18px 0}
+.academy-request-summary b{color:#14815f}.academy-request-summary code{font-size:15px}
+.academy-evidence{margin:20px 0}.academy-evidence .code{max-height:350px;overflow:auto}
+.academy-feedback{border:1px solid #b8c9e2;border-radius:10px;padding:15px;margin:18px 0;font-size:15px;line-height:1.7}
+.academy-feedback.good{background:#e9f8f0;border-color:#8ed0ad;color:#176545}
+.academy-feedback.bad{background:#fff2f0;border-color:#edb5aa;color:#8d342c}
+.academy-python-editor{display:block;width:100%;font:14px/1.7 ui-monospace,SFMono-Regular,Consolas,monospace;background:#15233b;color:#f0f5ff;border:1px solid #566784;border-radius:10px;padding:18px;resize:vertical;tab-size:4}
+.academy-code-guide{background:#f1f6ff;border:1px solid #dce6f8;padding:18px;border-radius:11px}
+.academy-code-feedback{background:#f4f7fc;padding:18px;border-radius:10px;margin-top:18px}
+.academy-code-feedback p{margin:8px 0}.academy-code-feedback small{color:#546780}
+@media(max-width:700px){.academy-guided-card{padding:19px}.academy-guided-card h2{font-size:22px}}

@@ -1,0 +1,32 @@
+name: API QA Academy quality gate
+on:
+  pull_request:
+  push:
+    branches: [main]
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Generate temporary lockfile (repository lockfile still required before release)
+        run: npm install --package-lock-only --ignore-scripts
+      - run: npm ci
+      - run: npm test
+      - run: npm run build
+      - name: Install browser test runner
+        run: npm install --no-save --ignore-scripts playwright
+      - name: Install Chromium
+        run: npx playwright install --with-deps chromium
+      - name: Exercise all nine scenarios in Chromium (mocked API)
+        run: node tests/browserJourney.mjs
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: python -m pip install pytest requests
+      - name: Execute live DummyJSON pytest integration suite
+        run: python -m pytest -v python_tests/test_product_get.py
+      - name: Ensure Vite output exists
+        run: test -f dist/index.html
