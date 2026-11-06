@@ -7,3 +7,6 @@ test('Python starter checks accept a correctly formed example',()=>{const code=S
 
 test('commented-out assertions must not pass',()=>{const source='import requests\nresponse = requests.get("https://dummyjson.com/products/1")\n# assert response.status_code == 200\n# assert response.json()["id"] == 1';assert.equal(gradePythonStarter(source).pass,false)});
 test('wrong API endpoint must not pass',()=>{const source='import requests\nresponse = requests.get("https://dummyjson.com/products/2")\nassert response.status_code == 200\nassert response.json()["id"] == 1';assert.equal(gradePythonStarter(source).pass,false)});
+
+test('assertions must use the response variable from the real GET request',()=>{const code='import requests\nresult = requests.get("https://dummyjson.com/products/1")\nassert response.status_code == 200\nassert response.json()["id"] == 1';assert.equal(gradePythonStarter(code).pass,false)});
+test('a different valid response variable is supported',()=>{const code='import requests\nr = requests.get("https://dummyjson.com/products/1")\nassert r.status_code == 200\nassert r.json()["id"] == 1';assert.equal(gradePythonStarter(code).pass,true)});

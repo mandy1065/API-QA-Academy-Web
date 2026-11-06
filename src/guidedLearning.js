@@ -33,11 +33,15 @@ export function gradePythonStarter(source){
   }
   return out;
  }).join('\n');
+ const match=clean.match(/(?:^|\n)\s*(\w+)\s*=\s*requests\.get\s*\(\s*['\"]https:\/\/dummyjson\.com\/products\/1['\"]/);
+ const variable=match?.[1];
+ const statusPattern=variable?new RegExp('\\bassert\\s+'+variable+'\\.status_code\\s*==\\s*200\\b'):null;
+ const idPattern=variable?new RegExp('\\bassert\\s+'+variable+'\\.json\\(\\)\\s*\\[\\s*[\\x22\\x27]id[\\x22\\x27]\\s*\\]\\s*==\\s*1\\b'):null;
  const checks=[
  {name:'Import requests',ok:/^\s*import\s+requests\b/m.test(clean),fix:'Add: import requests'},
- {name:'GET the correct product endpoint',ok:/requests\.get\s*\(\s*['"]https:\/\/dummyjson\.com\/products\/1['"]/.test(clean),fix:'Use requests.get("https://dummyjson.com/products/1", timeout=10).'},
- {name:'Assert HTTP 200',ok:/\bassert\s+\w+\.status_code\s*==\s*200\b/.test(clean),fix:'Add: assert response.status_code == 200'},
- {name:'Assert product ID 1',ok:/\bassert\s+\w+\.json\(\)\s*\[\s*['"]id['"]\s*\]\s*==\s*1\b/.test(clean),fix:'Add: assert response.json()["id"] == 1'}
+ {name:'GET the correct product endpoint',ok:!!variable,fix:'Use requests.get("https://dummyjson.com/products/1", timeout=10).'},
+ {name:'Assert HTTP 200',ok:!!statusPattern?.test(clean),fix:'Add: assert response.status_code == 200'},
+ {name:'Assert product ID 1',ok:!!idPattern?.test(clean),fix:'Add: assert response.json()["id"] == 1'}
  ];
  return {pass:checks.every(x=>x.ok),checks,disclaimer:'STRUCTURE CHECK ONLY: this does not execute Python, prove variable references are correct, or verify the API. Run pytest locally to verify the test.'};
 }
