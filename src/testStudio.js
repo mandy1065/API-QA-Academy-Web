@@ -44,7 +44,7 @@ export function generateTests(items,framework='requests'){
  const payload=t.body?.trim()?JSON.stringify(t.body.trim()):null;
  const pre=usePw?'    context = playwright.request.new_context(base_url=BASE_URL)\n    try:\n':'';
  const indent=usePw?'        ':'    ';
- const request=usePw?`${indent}response = context.fetch(${JSON.stringify(t.path)}, method=${JSON.stringify(t.method)}${payload?', data='+'json.loads('+payload+')' :''})\n`:`${indent}response = requests.request(${JSON.stringify(t.method)}, BASE_URL + ${JSON.stringify(t.path)}${payload?', json='+JSON.stringify(JSON.parse(t.body)) :''}, timeout=10)\n`;
+ const request=usePw?`${indent}response = context.fetch(${JSON.stringify(t.path)}, method=${JSON.stringify(t.method)}${payload?', data='+'json.loads('+payload+')' :''})\n`:`${indent}response = requests.request(${JSON.stringify(t.method)}, BASE_URL + ${JSON.stringify(t.path)}${payload?', json='+'json.loads('+payload+')' :''}, timeout=10)\n`;
  const status=`${indent}assert response.${usePw?'status':'status_code'} == ${t.expectedStatus}\n`;
  const field=t.field?.trim();
  const assertField=field?`${indent}data = response.json()\n${indent}actual = data\n${field.split('.').map(part=>`${indent}actual = actual[${/^\d+$/.test(part)?part:JSON.stringify(part)}]\n`).join('')}${t.expectedValue!==''?`${indent}assert str(actual).lower() == ${JSON.stringify(String(t.expectedValue).toLowerCase())}\n`:''}`:'';
