@@ -1,4 +1,4 @@
-import test from 'node:test';import assert from 'node:assert/strict';import {GET_SCENARIOS,gradeManual,gradePythonStarter,STARTER_PYTHON} from '../src/guidedLearning.js';
+import test from 'node:test';import assert from 'node:assert/strict';import {GET_SCENARIOS,gradeManual,gradePythonStarter,STARTER_PYTHON,EXTRA_SCENARIOS,ALL_SCENARIOS,gradeIndependentAssignment} from '../src/guidedLearning.js';
 test('manual positive status and JSON are graded against expectations',()=>{const t=GET_SCENARIOS[0];assert.equal(gradeManual(t,{status:200,data:{id:1}},'200').pass,true);assert.equal(gradeManual(t,{status:200,data:{id:2}},'200').pass,false);assert.equal(gradeManual(t,{status:404,data:{message:'Missing'}},'200').pass,false)});
 test('manual negative 404 is a valid PASS',()=>{const t=GET_SCENARIOS[1];assert.equal(gradeManual(t,{status:404,data:{message:'Not found'}},'404').pass,true);assert.equal(gradeManual(t,{status:404,data:{}},'404').pass,false)});
 test('prediction required before grading',()=>{assert.equal(gradeManual(GET_SCENARIOS[0],{status:200,data:{id:1}},'').pass,false)});
@@ -14,3 +14,7 @@ test('a different valid response variable is supported',()=>{const code='import 
 test('all four GET teaching scenarios exist',()=>{assert.deepEqual(GET_SCENARIOS.map(s=>s.id),['valid','missing','invalid','schema'])});
 test('schema case checks required types and fields',()=>{const t=GET_SCENARIOS[3];assert.equal(gradeManual(t,{status:200,data:{id:1,title:'Phone',price:99}},'200').pass,true);assert.equal(gradeManual(t,{status:200,data:{id:1,title:'Phone',price:'99'}},'200').pass,false);assert.equal(gradeManual(t,{status:200,data:{id:1,title:'',price:99}},'200').pass,false)});
 test('invalid identifier is a valid negative test when 404 and message returned',()=>{assert.equal(gradeManual(GET_SCENARIOS[2],{status:404,data:{message:'Not found'}},'404').pass,true)});
+
+test('guided learning covers CRUD and unauthenticated negative scenario',()=>{assert.deepEqual(EXTRA_SCENARIOS.map(x=>x.method),['POST','PUT','PATCH','DELETE','GET']);assert.equal(ALL_SCENARIOS.length,9)});
+test('independent assessment rejects simulated responses',()=>{const scenario=ALL_SCENARIOS[1];assert.equal(gradeIndependentAssignment({scenario,response:{mode:'SIMULATED',status:404,data:{message:'Not found'}},prediction:'404',field:'message',value:''}).pass,false)});
+test('independent assessment requires real response and correct prediction',()=>{const scenario=ALL_SCENARIOS[1];const response={mode:'LIVE',status:404,data:{message:'Not found'}};assert.equal(gradeIndependentAssignment({scenario,response,prediction:'200',field:'message',value:''}).pass,false);assert.equal(gradeIndependentAssignment({scenario,response,prediction:'404',field:'message',value:''}).pass,true)});
