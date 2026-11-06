@@ -142,3 +142,29 @@
 
 /* Hide lesson-specific chrome on academy-wide pages. */
 body:has(.academy-dashboard) .welcome,body:has(.academy-dashboard) .footer-nav,body:has(.academy-framework) .welcome,body:has(.academy-framework) .footer-nav,body:has(.academy-studio-heading) .welcome,body:has(.academy-studio-heading) .footer-nav{display:none}
+
+
+/* Student-first UX: one clear stage at a time */
+.academy-primary-nav{position:sticky;top:0;z-index:4;box-shadow:0 3px 18px #182b4c10;justify-content:center}
+.academy-nav-btn{font-size:15px;padding:15px 20px}
+.academy-track-grid{grid-template-columns:repeat(2,minmax(0,1fr));max-width:1060px}
+.academy-track{min-height:240px}
+.academy-dashboard-hero{margin-top:10px}
+.academy-stage-intro{background:white;border:1px solid #dfe7f3;border-radius:17px;padding:32px;margin:22px 0}
+.academy-stage-intro h2{font-size:29px;margin:12px 0}.academy-stage-intro>p{font-size:17px;line-height:1.8;max-width:780px;color:#546780}
+.academy-manual-steps{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px;margin:25px 0}
+.academy-manual-steps>div{display:flex;flex-direction:column;gap:10px;border:1px solid #dae5f5;border-radius:12px;background:#f5f8ff;padding:18px}
+.academy-manual-steps b{font-size:15px;color:#203967}.academy-manual-steps span{font-size:14px;color:#5b6c84;line-height:1.6}
+.academy-manual-example{background:#f6f9ff;border:1px solid #dae5f5;border-radius:15px;padding:26px;margin:18px 0}
+.academy-manual-example h3{font-size:20px}.academy-manual-example p{font-size:15px;line-height:1.8}
+body:not(:has(.academy-lesson-experience)) .welcome{display:none}
+body:not(:has(.academy-lesson-experience)) .footer-nav{display:none}
+body:has(.academy-lesson-experience) .welcome{display:none}
+body:not(:has(.academy-lesson-experience)) .course-heading,
+body:not(:has(.academy-lesson-experience)) .sidebar .search,
+body:not(:has(.academy-lesson-experience)) .lesson-nav{display:none}
+body:has(.academy-lesson-experience) .nav-group:not(:first-child){display:none}
+body:has(.academy-lesson-experience) .course-heading span{display:none}
+body:has(.academy-lesson-experience) .course-heading{font-size:13px}
+body:has(.academy-lesson-experience) .course-heading::after{content:' · START HERE'}
+@media(max-width:800px){.academy-track-grid,.academy-manual-steps{grid-template-columns:1fr}.academy-stage-intro{padding:22px}.academy-primary-nav{justify-content:flex-start}}
