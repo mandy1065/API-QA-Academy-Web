@@ -40,3 +40,13 @@ This is a release candidate, not production approval. The 9/10 scores must be de
 
 ## Deployment rule
 Do not merge into main or deploy from feature branches. Enable branch protection requiring the quality-gate workflow and human review. If Vercel is connected to feature branches, disable automatic production deployment and treat preview deployments separately. This repository change does not itself modify Vercel account settings.
+
+## Additional mandatory coverage for this PR
+- Confirm the prediction answer is hidden until the student executes and evaluates.
+- Validate four GET scenarios against LIVE DummyJSON in a real browser; verify actual invalid-ID status and error body rather than assuming a contract.
+- Validate POST, PUT, PATCH, DELETE responses and explain DummyJSON's non-persistent writes.
+- Validate unauthenticated /auth/me behavior and distinguish authentication from authorization.
+- Review the illustrative defect report for steps, expected/actual, evidence, and reproducibility.
+- Confirm independent assessment rejects simulated requests and incomplete explanations, and persists progress.
+- Inspect GitHub Actions results for the checked-in live pytest suite. A workflow definition is not evidence that tests passed.
+- Verify no production deployment is triggered from this feature branch or its PR. Keep production disabled until both rubrics are independently verified >=9/10.
