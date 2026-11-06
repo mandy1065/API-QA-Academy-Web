@@ -35,10 +35,8 @@ export function gradePythonStarter(source){
  }).join('\n');
  const match=clean.match(/(?:^|\n)\s*(\w+)\s*=\s*requests\.get\s*\(\s*['\"]https:\/\/dummyjson\.com\/products\/1['\"]/);
  const variable=match?.[1];
- const escapeRegex=value=>value.replace(/[.*+?^${}()|[\]\\]/g,'\\const checks=[
- {name:'Import requests'');
- const statusPattern=variable?new RegExp('\\bassert\\s+'+escapeRegex(variable)+'\\.status_code\\s*==\\s*200\\b'):null;
- const idPattern=variable?new RegExp('\\bassert\\s+'+escapeRegex(variable)+'\\.json\\(\\)\\s*\\[\\s*[\\\"\\\']id[\\\"\\\']\\s*\\]\\s*==\\s*1\\b'):null;
+ const statusPattern=variable?new RegExp('\\bassert\\s+'+variable+'\\.status_code\\s*==\\s*200\\b'):null;
+ const idPattern=variable?new RegExp('\\bassert\\s+'+variable+'\\.json\\(\\)\\s*\\[\\s*["\\']id["\\']\\s*\\]\\s*==\\s*1\\b'):null;
  const checks=[
  {name:'Import requests',ok:/^\s*import\s+requests\b/m.test(clean),fix:'Add: import requests'},
  {name:'GET the correct product endpoint',ok:!!variable,fix:'Use requests.get("https://dummyjson.com/products/1", timeout=10).'},
