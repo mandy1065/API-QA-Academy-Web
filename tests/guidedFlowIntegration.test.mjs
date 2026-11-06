@@ -20,3 +20,13 @@ test('independent assignment requires conceptual choice and exact JSON assertion
  assert.match(source,/value:assessmentValue/);
  assert.match(source,/evaluated:!!manualFeedback&&manualFeedback.pass/);
 });
+
+test('independent reasoning selector is rendered and required before grading',()=>{
+ assert.match(source,/id="assessmentReasonChoice"/);
+ assert.match(source,/assessmentReasonChoice=\$\('#assessmentReasonChoice'\)\.value/);
+ assert.match(source,/reasonChoice:assessmentReasonChoice/);
+});
+test('independent answer includes HTTP status and JSON evidence',()=>{
+ assert.match(source,/assessmentReason\.toLowerCase\(\)\.includes\('404'\)/);
+ assert.match(source,/assessmentReason\.toLowerCase\(\)\.includes\('message'\)/);
+});
