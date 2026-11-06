@@ -16,5 +16,26 @@ test('schema case checks required types and fields',()=>{const t=GET_SCENARIOS[3
 test('invalid identifier is a valid negative test when 404 and message returned',()=>{assert.equal(gradeManual(GET_SCENARIOS[2],{status:404,data:{message:'Not found'}},'404').pass,true)});
 
 test('guided learning covers CRUD and unauthenticated negative scenario',()=>{assert.deepEqual(EXTRA_SCENARIOS.map(x=>x.method),['POST','PUT','PATCH','DELETE','GET']);assert.equal(ALL_SCENARIOS.length,9)});
-test('independent assessment rejects simulated responses',()=>{const scenario=ALL_SCENARIOS[1];assert.equal(gradeIndependentAssignment({scenario,response:{mode:'SIMULATED',status:404,data:{message:'Not found'}},prediction:'404',field:'message',value:''}).pass,false)});
-test('independent assessment requires real response and correct prediction',()=>{const scenario=ALL_SCENARIOS[1];const response={mode:'LIVE',status:404,data:{message:'Not found'}};assert.equal(gradeIndependentAssignment({scenario,response,prediction:'200',field:'message',value:''}).pass,false);assert.equal(gradeIndependentAssignment({scenario,response,prediction:'404',field:'message',value:''}).pass,true)});
+
+test('independent assessment requires live execution, evaluated evidence, exact JSON assertion and reasoning',()=>{
+ const scenario=ALL_SCENARIOS[1],response={mode:'LIVE',status:404,data:{message:'Product not found'}};
+ const base={scenario,response,prediction:'404',field:'message',value:'Product not found',reasonChoice:'expected-negative',evaluated:true};
+ assert.equal(gradeIndependentAssignment(base).pass,true);
+ for(const change of [{response:{...response,mode:'SIMULATED'}},{evaluated:false},{value:''},{value:'wrong'},{field:'id'},{reasonChoice:'any-error'},{prediction:'200'},{scenario:ALL_SCENARIOS[0]}]){
+  assert.equal(gradeIndependentAssignment({...base,...change}).pass,false,JSON.stringify(change));
+ }
+});
+test('all nine guided scenarios have valid grading contracts',()=>{
+ const samples=[
+ {status:200,data:{id:1,title:'Product',price:10}},
+ {status:404,data:{message:'Not found'}},
+ {status:404,data:{message:'Not found'}},
+ {status:200,data:{id:1,title:'Product',price:10}},
+ {status:201,data:{title:'QA Learning Product'}},
+ {status:200,data:{title:'QA Replacement'}},
+ {status:200,data:{title:'QA Updated'}},
+ {status:200,data:{isDeleted:true}},
+ {status:401,data:{message:'Unauthorized'}}
+ ];
+ ALL_SCENARIOS.forEach((scenario,index)=>assert.equal(gradeManual(scenario,samples[index],String(scenario.expectedStatus)).pass,true,scenario.id));
+});
