@@ -1,8 +1,10 @@
 // Guided, evidence-based exercises for the first manual-to-automation learning journey.
 // Grading is deliberately scoped to concrete observable results, not arbitrary Python execution.
 export const GET_SCENARIOS=[
- {id:'positive',title:'Existing product',method:'GET',path:'/products/1',expectedStatus:200,field:'id',value:1,why:'The requested product exists, so the response should identify product 1.'},
- {id:'negative',title:'Missing product',method:'GET',path:'/products/999999',expectedStatus:404,field:'message',value:null,why:'An unknown product should produce a documented not-found response.'}
+ {id:'valid',title:'Valid product ID',method:'GET',path:'/products/1',expectedStatus:200,field:'id',value:1,why:'A known product ID must return that product. Verify the response status and id.'},
+ {id:'missing',title:'Missing product ID',method:'GET',path:'/products/999999',expectedStatus:404,field:'message',value:null,why:'A product ID that does not exist must return a not-found response.'},
+ {id:'invalid',title:'Invalid product ID',method:'GET',path:'/products/not-a-number',expectedStatus:404,field:'message',value:null,why:'An invalid identifier should be rejected or not found. DummyJSON currently uses 404; compare observed behavior to its contract.'},
+ {id:'schema',title:'Response structure',method:'GET',path:'/products/1',expectedStatus:200,field:'title',value:null,requiredFields:['id','title','price'],why:'A product response must contain an integer id, a nonempty title, and a numeric price.'}
 ];
 export function findField(data,path){
  if(!path)return {found:true,value:data};
@@ -17,7 +19,7 @@ export function gradeManual(scenario,response,prediction){
  const result=findField(response.data,scenario.field);
  if(!result.found)return {pass:false,message:'Response is missing required JSON field "'+scenario.field+'".'};
  if(scenario.value!==null&&result.value!==scenario.value)return {pass:false,message:'Field "'+scenario.field+'" is '+JSON.stringify(result.value)+'; expected '+JSON.stringify(scenario.value)+'.'};
- return {pass:true,message:'PASS: status and JSON contract match the expected behavior. Record the evidence and save this test case.'};
+ if(scenario.requiredFields){for(const field of scenario.requiredFields){const check=findField(response.data,field);if(!check.found)return {pass:false,message:'Required schema field missing: '+field};if(field==='id'&&!Number.isInteger(check.value))return {pass:false,message:'Schema mismatch: id must be an integer.'};if(field==='title'&&(typeof check.value!=='string'||!check.value.trim()))return {pass:false,message:'Schema mismatch: title must be a nonempty string.'};if(field==='price'&&(typeof check.value!=='number'||!Number.isFinite(check.value)))return {pass:false,message:'Schema mismatch: price must be numeric.'};}}return {pass:true,message:'PASS: status and JSON contract match the expected behavior. Record the evidence and save this test case.'};
 }
 // Static structural feedback only; never claim Python has been executed.
 export function gradePythonStarter(source){
@@ -46,3 +48,37 @@ export function gradePythonStarter(source){
  return {pass:checks.every(x=>x.ok),checks,disclaimer:'STRUCTURE CHECK ONLY: this does not execute Python, prove variable references are correct, or verify the API. Run pytest locally to verify the test.'};
 }
 export const STARTER_PYTHON='import requests\n\nresponse = requests.get("https://dummyjson.com/products/1", timeout=10)\nprint(response.status_code)\nprint(response.json())\n\n# Add your assertions below\n';
+
+export const PYTEST_GET_EXAMPLE = [
+'# Save as test_product_get.py',
+'# Install: python -m pip install pytest requests',
+'# Run: python -m pytest -v test_product_get.py',
+'# An actual PASS requires executing pytest; the browser cannot run this file.',
+'import pytest',
+'import requests',
+'',
+'BASE_URL = "https://dummyjson.com"',
+'',
+'def test_existing_product():',
+'    response = requests.get(BASE_URL + "/products/1", timeout=10)',
+'    assert response.status_code == 200',
+'    data = response.json()',
+'    assert data["id"] == 1',
+'',
+'@pytest.mark.parametrize("path", ["/products/999999", "/products/not-a-number"])',
+'def test_missing_or_invalid_product(path):',
+'    response = requests.get(BASE_URL + path, timeout=10)',
+'    assert response.status_code == 404',
+'    assert "message" in response.json()',
+'',
+'def test_product_response_structure():',
+'    response = requests.get(BASE_URL + "/products/1", timeout=10)',
+'    assert response.status_code == 200',
+'    data = response.json()',
+'    assert isinstance(data["id"], int)',
+'    assert isinstance(data["title"], str) and data["title"].strip()',
+'    assert isinstance(data["price"], (int, float))',
+'',
+'# NEXT LESSON: move BASE_URL into configuration and reuse requests.Session',
+'# NEXT LESSON: pytest fixtures and reusable API clients',
+''].join('\n');

@@ -10,3 +10,7 @@ test('wrong API endpoint must not pass',()=>{const source='import requests\nresp
 
 test('assertions must use the response variable from the real GET request',()=>{const code='import requests\nresult = requests.get("https://dummyjson.com/products/1")\nassert response.status_code == 200\nassert response.json()["id"] == 1';assert.equal(gradePythonStarter(code).pass,false)});
 test('a different valid response variable is supported',()=>{const code='import requests\nr = requests.get("https://dummyjson.com/products/1")\nassert r.status_code == 200\nassert r.json()["id"] == 1';assert.equal(gradePythonStarter(code).pass,true)});
+
+test('all four GET teaching scenarios exist',()=>{assert.deepEqual(GET_SCENARIOS.map(s=>s.id),['valid','missing','invalid','schema'])});
+test('schema case checks required types and fields',()=>{const t=GET_SCENARIOS[3];assert.equal(gradeManual(t,{status:200,data:{id:1,title:'Phone',price:99}},'200').pass,true);assert.equal(gradeManual(t,{status:200,data:{id:1,title:'Phone',price:'99'}},'200').pass,false);assert.equal(gradeManual(t,{status:200,data:{id:1,title:'',price:99}},'200').pass,false)});
+test('invalid identifier is a valid negative test when 404 and message returned',()=>{assert.equal(gradeManual(GET_SCENARIOS[2],{status:404,data:{message:'Not found'}},'404').pass,true)});
