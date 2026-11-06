@@ -136,3 +136,6 @@
 .json-number{color:#75b6ff}.json-string{color:#8be5b1}.json-bool{color:#d2a4ff}
 @media(max-width:1150px){.academy-track-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.academy-dashboard-hero{padding:28px}.academy-hero-illustration{display:none}}
 @media(max-width:700px){.academy-track-grid,.academy-metrics{grid-template-columns:1fr}.academy-steps button{flex:0 0 auto}.academy-single-lesson{padding:22px}.academy-primary-nav{flex-wrap:nowrap;overflow-x:auto}.visual-flow{flex-direction:column}.visual-arrow{transform:rotate(90deg);margin:8px}.visual-node{width:100%}.visual-pair,.visual-status{grid-template-columns:1fr}}
+
+/* The new six-section navigation replaces the old lesson-level tab bar. */
+.academy-primary-nav + .tabs{display:none}
