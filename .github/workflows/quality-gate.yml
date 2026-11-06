@@ -11,7 +11,8 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: '22'
-          cache: npm
+      - name: Generate temporary lockfile (repository lockfile still required before release)
+        run: npm install --package-lock-only --ignore-scripts
       - run: npm ci
       - run: npm test
       - run: npm run build
