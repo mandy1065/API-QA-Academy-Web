@@ -38,13 +38,13 @@ export function automationPanel(items,ids,framework){
 }
 export function generateTests(items,framework='requests'){
  const usePw=framework==='playwright';
- const header=usePw?'import pytest\nfrom playwright.sync_api import Playwright\n':'import pytest\nimport requests\n';
+ const header=usePw?'import json\nimport pytest\nfrom playwright.sync_api import Playwright\n':'import json\nimport pytest\nimport requests\n';
  const tests=items.map((t,i)=>{
  const name='test_'+String(t.id).toLowerCase().replace(/[^a-z0-9]+/g,'_')+'_'+i;
- const payload=t.body?.trim()?JSON.stringify(JSON.parse(t.body)):null;
+ const payload=t.body?.trim()?JSON.stringify(t.body.trim()):null;
  const pre=usePw?'    context = playwright.request.new_context(base_url=BASE_URL)\n    try:\n':'';
  const indent=usePw?'        ':'    ';
- const request=usePw?`${indent}response = context.fetch(${JSON.stringify(t.path)}, method=${JSON.stringify(t.method)}${payload?', data='+JSON.stringify(JSON.parse(t.body)) :''})\n`:`${indent}response = requests.request(${JSON.stringify(t.method)}, BASE_URL + ${JSON.stringify(t.path)}${payload?', json='+JSON.stringify(JSON.parse(t.body)) :''}, timeout=10)\n`;
+ const request=usePw?`${indent}response = context.fetch(${JSON.stringify(t.path)}, method=${JSON.stringify(t.method)}${payload?', data='+'json.loads('+payload+')' :''})\n`:`${indent}response = requests.request(${JSON.stringify(t.method)}, BASE_URL + ${JSON.stringify(t.path)}${payload?', json='+JSON.stringify(JSON.parse(t.body)) :''}, timeout=10)\n`;
  const status=`${indent}assert response.${usePw?'status':'status_code'} == ${t.expectedStatus}\n`;
  const field=t.field?.trim();
  const assertField=field?`${indent}data = response.json()\n${indent}actual = data\n${field.split('.').map(part=>`${indent}actual = actual[${/^\d+$/.test(part)?part:JSON.stringify(part)}]\n`).join('')}${t.expectedValue!==''?`${indent}assert str(actual).lower() == ${JSON.stringify(String(t.expectedValue).toLowerCase())}\n`:''}`:'';
