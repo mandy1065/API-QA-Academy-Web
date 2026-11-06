@@ -1,0 +1,6 @@
+import test from 'node:test';import assert from 'node:assert/strict';import {GET_SCENARIOS,gradeManual,gradePythonStarter,STARTER_PYTHON} from '../src/guidedLearning.js';
+test('manual positive status and JSON are graded against expectations',()=>{const t=GET_SCENARIOS[0];assert.equal(gradeManual(t,{status:200,data:{id:1}},'200').pass,true);assert.equal(gradeManual(t,{status:200,data:{id:2}},'200').pass,false);assert.equal(gradeManual(t,{status:404,data:{message:'Missing'}},'200').pass,false)});
+test('manual negative 404 is a valid PASS',()=>{const t=GET_SCENARIOS[1];assert.equal(gradeManual(t,{status:404,data:{message:'Not found'}},'404').pass,true);assert.equal(gradeManual(t,{status:404,data:{}},'404').pass,false)});
+test('prediction required before grading',()=>{assert.equal(gradeManual(GET_SCENARIOS[0],{status:200,data:{id:1}},'').pass,false)});
+test('Python checker explains missing assertions and does not claim execution',()=>{const a=gradePythonStarter(STARTER_PYTHON);assert.equal(a.pass,false);assert.equal(a.checks.filter(x=>!x.ok).length,2);assert.match(a.disclaimer,/does not execute Python/)});
+test('Python starter checks accept a correctly formed example',()=>{const code=STARTER_PYTHON+'assert response.status_code == 200\nassert response.json()["id"] == 1\n';assert.equal(gradePythonStarter(code).pass,true)});
