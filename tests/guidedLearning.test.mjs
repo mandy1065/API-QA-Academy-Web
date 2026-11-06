@@ -4,3 +4,6 @@ test('manual negative 404 is a valid PASS',()=>{const t=GET_SCENARIOS[1];assert.
 test('prediction required before grading',()=>{assert.equal(gradeManual(GET_SCENARIOS[0],{status:200,data:{id:1}},'').pass,false)});
 test('Python checker explains missing assertions and does not claim execution',()=>{const a=gradePythonStarter(STARTER_PYTHON);assert.equal(a.pass,false);assert.equal(a.checks.filter(x=>!x.ok).length,2);assert.match(a.disclaimer,/does not execute Python/)});
 test('Python starter checks accept a correctly formed example',()=>{const code=STARTER_PYTHON+'assert response.status_code == 200\nassert response.json()["id"] == 1\n';assert.equal(gradePythonStarter(code).pass,true)});
+
+test('commented-out assertions must not pass',()=>{const source='import requests\nresponse = requests.get("https://dummyjson.com/products/1")\n# assert response.status_code == 200\n# assert response.json()["id"] == 1';assert.equal(gradePythonStarter(source).pass,false)});
+test('wrong API endpoint must not pass',()=>{const source='import requests\nresponse = requests.get("https://dummyjson.com/products/2")\nassert response.status_code == 200\nassert response.json()["id"] == 1';assert.equal(gradePythonStarter(source).pass,false)});

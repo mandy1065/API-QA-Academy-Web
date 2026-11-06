@@ -19,13 +19,26 @@ export function gradeManual(scenario,response,prediction){
  if(scenario.value!==null&&result.value!==scenario.value)return {pass:false,message:'Field "'+scenario.field+'" is '+JSON.stringify(result.value)+'; expected '+JSON.stringify(scenario.value)+'.'};
  return {pass:true,message:'PASS: status and JSON contract match the expected behavior. Record the evidence and save this test case.'};
 }
+// Static structural feedback only; never claim Python has been executed.
 export function gradePythonStarter(source){
+ const clean=String(source).split('\n').map(line=>{
+  // Remove comments outside string literals (including full-line comments).
+  let quoted=null,escaped=false,out='';
+  for(const ch of line){
+   if(escaped){out+=ch;escaped=false;continue}
+   if(ch==='\\'&&quoted){out+=ch;escaped=true;continue}
+   if((ch==='"'||ch==="'")){if(quoted===ch)quoted=null;else if(!quoted)quoted=ch;out+=ch;continue}
+   if(ch==='#'&&!quoted)break;
+   out+=ch;
+  }
+  return out;
+ }).join('\n');
  const checks=[
- {name:'Import requests',ok:/^\s*import\s+requests\b/m.test(source),fix:'Add: import requests'},
- {name:'Send GET request',ok:/requests\.get\s*\(/.test(source),fix:'Call requests.get("https://dummyjson.com/products/1", timeout=10).'},
- {name:'Check status 200',ok:/assert\s+\w+\.status_code\s*==\s*200/.test(source),fix:'Assert the response status, for example: assert response.status_code == 200'},
- {name:'Check JSON product ID',ok:/assert\s+\w+\.json\(\)\s*\[\s*['"]id['"]\s*\]\s*==\s*1/.test(source),fix:'Assert the returned product ID: assert response.json()["id"] == 1'}
+ {name:'Import requests',ok:/^\s*import\s+requests\b/m.test(clean),fix:'Add: import requests'},
+ {name:'GET the correct product endpoint',ok:/requests\.get\s*\(\s*['"]https:\/\/dummyjson\.com\/products\/1['"]/.test(clean),fix:'Use requests.get("https://dummyjson.com/products/1", timeout=10).'},
+ {name:'Assert HTTP 200',ok:/\bassert\s+\w+\.status_code\s*==\s*200\b/.test(clean),fix:'Add: assert response.status_code == 200'},
+ {name:'Assert product ID 1',ok:/\bassert\s+\w+\.json\(\)\s*\[\s*['"]id['"]\s*\]\s*==\s*1\b/.test(clean),fix:'Add: assert response.json()["id"] == 1'}
  ];
- return {pass:checks.every(x=>x.ok),checks,disclaimer:'Static starter-code checks only. This does not execute Python or prove that the test passes against the API.'};
+ return {pass:checks.every(x=>x.ok),checks,disclaimer:'STRUCTURE CHECK ONLY: this does not execute Python, prove variable references are correct, or verify the API. Run pytest locally to verify the test.'};
 }
 export const STARTER_PYTHON='import requests\n\nresponse = requests.get("https://dummyjson.com/products/1", timeout=10)\nprint(response.status_code)\nprint(response.json())\n\n# Add your assertions below\n';
