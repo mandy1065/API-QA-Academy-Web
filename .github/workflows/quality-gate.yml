@@ -16,6 +16,12 @@ jobs:
       - run: npm ci
       - run: npm test
       - run: npm run build
+      - name: Install browser test runner
+        run: npm install --no-save --ignore-scripts playwright
+      - name: Install Chromium
+        run: npx playwright install --with-deps chromium
+      - name: Exercise all nine scenarios in Chromium (mocked API)
+        run: node tests/browserJourney.mjs
       - uses: actions/setup-python@v5
         with:
           python-version: '3.12'

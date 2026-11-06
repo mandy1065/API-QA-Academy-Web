@@ -3,11 +3,11 @@
 export const GET_SCENARIOS=[
  {id:'valid',title:'Valid product ID',method:'GET',path:'/products/1',expectedStatus:200,field:'id',value:1,why:'A known product ID must return that product. Verify the response status and id.'},
  {id:'missing',title:'Missing product ID',method:'GET',path:'/products/999999',expectedStatus:404,field:'message',value:null,why:'A product ID that does not exist must return a not-found response.'},
- {id:'invalid',title:'Invalid product ID',method:'GET',path:'/products/not-a-number',expectedStatus:404,field:'message',value:null,why:'An invalid identifier should be rejected or not found. DummyJSON currently uses 404; compare observed behavior to its contract.'},
+ {id:'invalid',title:'Invalid product ID',method:'GET',path:'/products/not-a-number',expectedStatus:404,field:'message',value:null,why:'An invalid identifier should be rejected or not found. Compare observed behavior to the documented API contract.'},
  {id:'schema',title:'Response structure',method:'GET',path:'/products/1',expectedStatus:200,field:'title',value:null,requiredFields:['id','title','price'],why:'A product response must contain an integer id, a nonempty title, and a numeric price.'}
 ];
 export const EXTRA_SCENARIOS=[
- {id:'post',title:'POST create product',method:'POST',path:'/products/add',body:{title:'QA Learning Product',price:25},expectedStatus:201,field:'title',value:'QA Learning Product',why:'Creating a product should return HTTP 201 and the submitted title. DummyJSON simulates writes; no persistent database change.'},
+ {id:'post',title:'POST create product',method:'POST',path:'/products/add',body:{title:'QA Learning Product',price:25},expectedStatus:201,field:'title',value:'QA Learning Product',why:'Creating a product should return the submitted title and a successful creation response. DummyJSON simulates writes; no persistent database change.'},
  {id:'put',title:'PUT replace product',method:'PUT',path:'/products/1',body:{title:'QA Replacement',price:35},expectedStatus:200,field:'title',value:'QA Replacement',why:'PUT replaces a product representation. DummyJSON simulates the update.'},
  {id:'patch',title:'PATCH update title',method:'PATCH',path:'/products/1',body:{title:'QA Updated'},expectedStatus:200,field:'title',value:'QA Updated',why:'PATCH changes selected fields. DummyJSON simulates the update.'},
  {id:'delete',title:'DELETE product',method:'DELETE',path:'/products/1',expectedStatus:200,field:'isDeleted',value:true,why:'The simulated delete response should contain isDeleted=true.'},
