@@ -34,7 +34,7 @@ try{
   const expected=String(scenarios[i][2]);
   await page.locator('#manualPrediction').selectOption(expected);
   await page.locator('#guidedRun').click();
-  await page.locator('.academy-evidence').first().waitFor();
+  await page.getByText('Actual response · HTTP '+expected).waitFor({timeout:15000});
   assert.equal(await page.locator('#manualPrediction').isDisabled(),true,'prediction must be locked');
   await page.locator('#guidedCheck').click();
   await page.locator('#guidedSaveCase').waitFor();
@@ -44,6 +44,7 @@ try{
  await page.locator('[data-scenario="1"]').click();
  await page.locator('#manualPrediction').selectOption('404');
  await page.locator('#guidedRun').click();
+ await page.getByText('Actual response · HTTP 404').waitFor({timeout:15000});
  await page.locator('#guidedCheck').click();
  await page.locator('#assessmentField').fill('message');
  await page.locator('#assessmentValue').fill('Product not found');
