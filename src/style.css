@@ -139,3 +139,6 @@
 
 /* The new six-section navigation replaces the old lesson-level tab bar. */
 .academy-primary-nav + .tabs{display:none}
+
+/* Hide lesson-specific chrome on academy-wide pages. */
+body:has(.academy-dashboard) .welcome,body:has(.academy-dashboard) .footer-nav,body:has(.academy-framework) .welcome,body:has(.academy-framework) .footer-nav,body:has(.academy-studio-heading) .welcome,body:has(.academy-studio-heading) .footer-nav{display:none}
